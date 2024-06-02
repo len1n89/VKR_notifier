@@ -78,6 +78,7 @@ signals:
     void ipAddressChanged();
     void portChanged();
     void statusChanged();
+    void incidentClosed();
 
 public slots:
     //! \brief Установка статуса подключения сервера

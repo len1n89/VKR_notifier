@@ -51,17 +51,22 @@ bool Subject::containsIncident(Incident::IncidentType type)
 
 void Subject::openIncident(Incident::IncidentType type)
 {
+    qDebug()<<"***openIncident";
     Incident *inc = new Incident(type);
     m_incidentList.append(inc);
 }
 
 void Subject::closeIncident(Incident::IncidentType type)
 {
+    qDebug()<<"***closeIncident";
     Incident *incident;
     for(int i = 0; i < m_incidentList.size(); i++) {
         incident = m_incidentList.at(i);
         if(incident->type() == type) {
             m_incidentList.removeAt(i);
+            incident->~Incident();
+
+            emit incidentClosed();
             return;
         }
     }
@@ -118,6 +123,13 @@ void Subject::onConnectionStatusChanged(bool status)
         qDebug()<<"Subject connected!";
         setStatus(Connected);
         // TODO запрос остояния сервера/ а потом проверка DBNotConnectedToServer
+
+        // Если инцидент есть - то закрыть его
+        if(this->containsIncident(Incident::ServerNotConnected)) {
+            qDebug()<<"onConnectionFailed containsIncident";
+            // если в списке нет инц-та с типом ServerNotConnected - создать новый и добавить в список
+            closeIncident(Incident::ServerNotConnected);
+        }
     }
     else {
         qDebug()<<"Subject Disconnected!";
@@ -125,12 +137,6 @@ void Subject::onConnectionStatusChanged(bool status)
 
         // Если отрубило - попытка подключить
         tryToConnect();
-
-//        if(!this->containsIncident(Incident::ServerNotConnected)) {
-//            qDebug()<<"!containsIncident";
-//            // если в списке нет инц-та с типом ServerNotConnected - создать новый и добавить в список
-//            openIncident(Incident::ServerNotConnected);
-//        }
     }
 }
 
@@ -144,5 +150,8 @@ void Subject::onConnectionFailed()
         qDebug()<<"onConnectionFailed !containsIncident";
         // если в списке нет инц-та с типом ServerNotConnected - создать новый и добавить в список
         openIncident(Incident::ServerNotConnected);
+        tryToConnect();
     }
+    else
+        tryToConnect();
 }

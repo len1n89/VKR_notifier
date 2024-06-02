@@ -6,6 +6,8 @@
 class QTcpSocket;
 class QTimer;
 
+const static int TRY_COUNT = 5;
+
 //! \class Client
 //! \brief Класс для подключения к серверу
 //! Один клиент - одно подключение

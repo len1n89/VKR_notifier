@@ -7,8 +7,6 @@
 
 #include <QDebug>
 
-const static int TRY_COUNT = 5;
-
 Client::Client()
     : QObject()
     , m_tryCount(TRY_COUNT)

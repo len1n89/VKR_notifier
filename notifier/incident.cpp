@@ -1,5 +1,6 @@
 #include "incident.h"
 #include "subject.h"
+#include <QDebug>
 
 Incident::Incident(IncidentType type)
     : m_type(type)
@@ -10,7 +11,7 @@ Incident::Incident(IncidentType type)
 
 Incident::~Incident()
 {
-
+    qDebug()<<"~Incident";
 }
 
 int Incident::getId() const
