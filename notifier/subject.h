@@ -2,11 +2,15 @@
 #define SUBJECT_H
 
 #include<QObject>
+// пришлось добавить чтобы Subject видел Incident::IncidentType
+#include "incident.h"
+
 
 //! \class Subject
 //! \brief Наблюдаемый субъект, т.е. сервер за которым наблюдает notifier
 
 class Client;
+//class Incident;
 
 class Subject : public QObject
 {
@@ -30,12 +34,23 @@ public:
     Subject();
     virtual ~Subject();
 
+    //! Public functions
 public:
     //! \brief Попытка подключиться к субъекту
     bool tryToConnect();
 
+    //! \brief Проверяет есть ли в списке инцидент с заданным типом
+    bool containsIncident(Incident::IncidentType type);
+
     //! \brief возвращает статус подключения
     bool connected();
+
+    //! \brief Открыть новый инцидент
+    void openIncident(Incident::IncidentType type);
+
+    //! \brief
+    void closeIncident(Incident::IncidentType type);
+
 
     //! Getters
 public:
@@ -68,6 +83,9 @@ public slots:
     //! \brief Установка статуса подключения сервера
     void onConnectionStatusChanged(bool status);
 
+    //! \brief Если не удалось подключиться
+    void onConnectionFailed();
+
 private:
     //! \brief Интервал попытоки подключения, после которого считать попытку неудачной
     int m_tryTimeout;
@@ -83,6 +101,9 @@ private:
 
     //! \brief Client Создает сокет и подключается к серверу
     Client *m_tcpClient;
+
+    //! \brief Список открытых инцидентов
+    QList<Incident*> m_incidentList;
 
     //! \brief Статус сервера
     //! Может уже готовые темы есть QTcpSocket например

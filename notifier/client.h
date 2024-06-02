@@ -32,6 +32,7 @@ public slots:
 signals:
     void statusChanged(bool status);
     void connectionError();
+    void connetionFailed();
 
 private slots:
     void readyRead();

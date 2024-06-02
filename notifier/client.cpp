@@ -7,9 +7,11 @@
 
 #include <QDebug>
 
+const static int TRY_COUNT = 5;
+
 Client::Client()
     : QObject()
-    , m_tryCount(5)
+    , m_tryCount(TRY_COUNT)
     , m_status(false)
     , m_nNextBlockSize(0)
     , m_tcpSocket(new QTcpSocket())
@@ -45,20 +47,14 @@ void Client::closeConnection()
 
     if(m_tcpSocket->state() == QTcpSocket::UnconnectedState) {
         m_tcpSocket->disconnectFromHost();
-        setStatus(false); //
+        setStatus(false);
     }
     else if(m_tcpSocket->state() == QTcpSocket::ConnectingState) {
         m_tcpSocket->abort();
-        setStatus(false);//
+        setStatus(false);
     }
     else
         m_tcpSocket->abort();
-
-//    if(m_tryCount == 0){
-//        setStatus(false);
-//        // Если closeConnection вызваьб принудительно, когда соединение есть а таймер не запущен
-//        // ТО статус не поменяется на false
-//    }
 }
 
 qint64 Client::sendToServer(QTcpSocket *socket, const QString &str)
@@ -106,6 +102,7 @@ void Client::readyRead()
 
 void Client::connected()
 {
+//    m_tryCount = TRY_COUNT;
     setStatus(true);
     sendToServer(m_tcpSocket, QHostInfo::localHostName());
 }
@@ -116,16 +113,22 @@ void Client::connectionTimeout()
 
     switch (m_tcpSocket->state()) {
     case QAbstractSocket::ConnectedState:
+        qDebug()<<"ConnectedState";
         // Подключено
         m_timeoutTimer->stop();
+        m_tryCount = TRY_COUNT;
         break;
+
     case QAbstractSocket::ConnectingState:
         // Если все еще подключается то отрубить
+        qDebug()<<"...ConnectingState";
         m_timeoutTimer->stop();
         closeConnection();
 
         if(m_tryCount == 0){
             setStatus(false);
+            m_tryCount = TRY_COUNT;
+            emit connetionFailed();
         }
         else {
             m_tryCount--;
@@ -134,13 +137,17 @@ void Client::connectionTimeout()
 //        m_tcpSocket->abort();
         emit m_tcpSocket->error(QAbstractSocket::SocketTimeoutError);
         break;
+
     case QAbstractSocket::UnconnectedState:
         // Если не удалось подключиться
+        qDebug()<<"UnconnectedState";
         m_timeoutTimer->stop();
         closeConnection();
 
         if(m_tryCount == 0){
             setStatus(false);
+            m_tryCount = TRY_COUNT;
+            emit connetionFailed();
         }
         else {
             m_tryCount--;

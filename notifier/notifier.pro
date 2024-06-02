@@ -7,7 +7,8 @@ QT += quick
 SOURCES += \
         client.cpp \
         main.cpp \
-    subject.cpp
+    subject.cpp \
+    incident.cpp
 
 RESOURCES += qml.qrc
 
@@ -24,4 +25,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     client.h \
-    subject.h
+    subject.h \
+    incident.h
