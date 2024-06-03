@@ -15,6 +15,9 @@ public:
     Message();
     virtual ~Message();
 
+public:
+    void send();
+
     //! Getters
 public:
     //! \brief Возвращает содержание письма

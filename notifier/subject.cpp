@@ -60,6 +60,25 @@ void Subject::openIncident(Incident::IncidentType type)
 
     inc->createMessage(m_name, m_ipAddress);
 
+    //! создавать сообщение для каждого типа отправки
+    //! inc->createMailMessage(m_name, m_ipAddress);
+    //! inc->createTelegramMessage(m_name, m_ipAddress);
+    //! inc->createPhone(m_name, m_ipAddress);
+    //!
+    //!
+    //! Для соответствующего типа инц-та передаем соответ-й список наблюдателей
+//    switch (type) {
+//    case ServerNotConnected:
+//        inc->setWatchers(m_watchers.value(ServerNotConnected));
+//        break;
+//    case DBNotConnectedToServer:
+//        inc->setWatchers(m_watchers.value(DBNotConnectedToServer));
+//        break;
+//    default:
+//        break;
+//    }
+
+
     m_incidentList.append(inc);
 
     //emit incidentOpenned();
@@ -125,6 +144,11 @@ void Subject::setStatus(Subject::Status status)
 
     m_status = status;
     emit statusChanged();
+}
+
+void Subject::setWatchers(Incident::IncidentType type, QList<Watcher*> watchers)
+{
+    m_watchers.insert(type, watchers);
 }
 
 void Subject::onConnectionStatusChanged(bool status)

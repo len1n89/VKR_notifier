@@ -4,7 +4,7 @@
 #include<QObject>
 // пришлось добавить чтобы Subject видел Incident::IncidentType
 #include "incident.h"
-
+#include "watcher.h"
 
 //! \class Subject
 //! \brief Наблюдаемый субъект, т.е. сервер за которым наблюдает notifier
@@ -48,9 +48,8 @@ public:
     //! \brief Открыть новый инцидент
     void openIncident(Incident::IncidentType type);
 
-    //! \brief
+    //! \brief Закрыть инцидент
     void closeIncident(Incident::IncidentType type);
-
 
     //! Getters
 public:
@@ -72,6 +71,9 @@ public:
     //! \brief Установить статус сервера
     void setStatus(Status status);
 
+    //! \brief Установить список наблюдателей для конкретного типа инцидента
+    void setWatchers(Incident::IncidentType type, QList<Watcher*> watchers);
+
 signals:
     void tryTimeoutChanged();
     void nameChanged();
@@ -79,6 +81,7 @@ signals:
     void portChanged();
     void statusChanged();
     void incidentClosed();
+    void incidentOpenned();
 
 public slots:
     //! \brief Установка статуса подключения сервера
@@ -105,6 +108,14 @@ private:
 
     //! \brief Список открытых инцидентов
     QList<Incident*> m_incidentList;
+
+    //! \brief Отправляет сообщения
+//    QList<Incident*> m_messenger;
+
+    //! \brief Список наблюдателей.
+    //! При открытии инцидента отправлять сообшение всем наблюдателям
+    //! пока инц не закрыт или не подтвержден
+    QHash<Incident::IncidentType, QList<Watcher*>> m_watchers;
 
     //! \brief Статус сервера
     //! Может уже готовые темы есть QTcpSocket например

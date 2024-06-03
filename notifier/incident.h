@@ -48,6 +48,10 @@ public:
     //! \brief Установить подтверждение инцидента
     void confirm();
 
+public slots:
+    //! \brief Запускает таймер и вызывает отправку сообщений
+    void onIncidentOpenned();
+
 signals:
     void confirmedChanged();
 
@@ -66,5 +70,10 @@ private:
 
     //! \brief Сообщение для отправки
     Message m_message;
+
+    //! \brief Наблюдатели инцидента
+    //! как добавить наблюдателя
+    //! это нужно сделать для конкретного subject:  incType - QList<Watchers>
+//    QList<Watcher> m_watchers;
 };
 #endif // INCIDENT_H

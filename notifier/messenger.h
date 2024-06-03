@@ -5,7 +5,7 @@
 
 //! \class Messenger
 //! \brief Класс Messenger занимается отправкой сообщений
-
+//! Ему передается сообщение и список контактов наблюдателей
 
 class Messenger : public QObject
 {
@@ -18,7 +18,7 @@ public:
     //! Public functions
 public:
     //! \brief Отправить сообщение
-//    void sendMessage();
+//    void sendMessage(const Message &message, const Contacts &contacts);
 
 private:
 };

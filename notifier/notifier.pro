@@ -10,7 +10,9 @@ SOURCES += \
     subject.cpp \
     incident.cpp \
     message.cpp \
-    messenger.cpp
+    messenger.cpp \
+    user.cpp \
+    watcher.cpp
 
 RESOURCES += qml.qrc
 
@@ -30,4 +32,6 @@ HEADERS += \
     subject.h \
     incident.h \
     messenger.h \
-    message.h
+    message.h \
+    user.h \
+    watcher.h
