@@ -2,9 +2,12 @@
 #define INCIDENT_H
 
 #include<QObject>
+#include "message.h"
 
 //! \class Incident
 //! \brief Класс представляющий инцидент. Это экземпляр конкретной проблемы
+
+//class Message;
 
 class Incident : public QObject
 {
@@ -20,6 +23,11 @@ public:
 
     Incident(IncidentType type);
     virtual ~Incident();
+
+    //! Public functions
+public:
+    //! \brief Создать новое сообщение
+    bool createMessage(const QString &name, const QString &ip);
 
     //! Getters
 public:
@@ -54,6 +62,9 @@ private:
     IncidentType m_type;
 
     //! \brief Описание
-    QString m_discription;
+//    QString m_discription;
+
+    //! \brief Сообщение для отправки
+    Message m_message;
 };
 #endif // INCIDENT_H

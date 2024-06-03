@@ -24,9 +24,6 @@ Subject::~Subject()
 
 bool Subject::tryToConnect()
 {
-    // пытается подключиться пока не вышло время
-    // если не получилось то фолс
-
     m_tcpClient->connectToServer(m_ipAddress, m_port);
 
     return true;
@@ -53,7 +50,20 @@ void Subject::openIncident(Incident::IncidentType type)
 {
     qDebug()<<"***openIncident";
     Incident *inc = new Incident(type);
+
+    // new message
+    QString error;
+    if(m_status == Connected)
+        error = m_error;
+    else
+        error == "Disconnected!";
+
+    inc->createMessage(m_name, m_ipAddress);
+
     m_incidentList.append(inc);
+
+    //emit incidentOpenned();
+    // пока не подтвержден - отправлять сообщения
 }
 
 void Subject::closeIncident(Incident::IncidentType type)
@@ -127,8 +137,9 @@ void Subject::onConnectionStatusChanged(bool status)
         // Если инцидент есть - то закрыть его
         if(this->containsIncident(Incident::ServerNotConnected)) {
             qDebug()<<"onConnectionFailed containsIncident";
-            // если в списке нет инц-та с типом ServerNotConnected - создать новый и добавить в список
             closeIncident(Incident::ServerNotConnected);
+
+
         }
     }
     else {
@@ -142,7 +153,7 @@ void Subject::onConnectionStatusChanged(bool status)
 
 void Subject::onConnectionFailed()
 {
-    //! Не удалось подключиться
+    //! Не удачная попытка подключиться
     setStatus(Disconnected);
 
     //! Открыть или не открыть инцидент
@@ -153,5 +164,6 @@ void Subject::onConnectionFailed()
         tryToConnect();
     }
     else
+        //! Если инцидент уже есть - то просто продолжать попытки подключения
         tryToConnect();
 }

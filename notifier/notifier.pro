@@ -8,7 +8,9 @@ SOURCES += \
         client.cpp \
         main.cpp \
     subject.cpp \
-    incident.cpp
+    incident.cpp \
+    message.cpp \
+    messenger.cpp
 
 RESOURCES += qml.qrc
 
@@ -26,4 +28,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     client.h \
     subject.h \
-    incident.h
+    incident.h \
+    messenger.h \
+    message.h
