@@ -16,7 +16,8 @@ public:
     virtual ~Message();
 
 public:
-    void send();
+    //! \brief Отправить данное сообщение на указанный адрес
+    void send(const QString &addr);
 
     //! Getters
 public:

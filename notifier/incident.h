@@ -2,12 +2,13 @@
 #define INCIDENT_H
 
 #include<QObject>
+#include<QTimer>
+
 #include "message.h"
+#include "watcher.h"
 
 //! \class Incident
 //! \brief Класс представляющий инцидент. Это экземпляр конкретной проблемы
-
-//class Message;
 
 class Incident : public QObject
 {
@@ -48,16 +49,23 @@ public:
     //! \brief Установить подтверждение инцидента
     void confirm();
 
+    //! \brief Установить наблюдателей инцидента
+    void setWatchers(const QList<Watcher*> list);
+
 public slots:
     //! \brief Запускает таймер и вызывает отправку сообщений
     void onIncidentOpenned();
 
+    //! \brief Таймер отправки сообщений
+    void onSendTimer();
+
 signals:
     void confirmedChanged();
+    void incidentOpenned();
 
 private:
     //! \brief Идентификатор инцидента
-    int m_id;
+//    int m_id;
 
     //! \brief Инцидент подтвержден. Админ увидел и подтвердил
     bool m_confirmed;
@@ -65,15 +73,15 @@ private:
     //! \brief Тип инцидента
     IncidentType m_type;
 
-    //! \brief Описание
-//    QString m_discription;
-
     //! \brief Сообщение для отправки
     Message m_message;
 
     //! \brief Наблюдатели инцидента
-    //! как добавить наблюдателя
-    //! это нужно сделать для конкретного subject:  incType - QList<Watchers>
-//    QList<Watcher> m_watchers;
+    //! При открытии инцидента отправлять сообшение всем наблюдателям
+    //! пока инц не закрыт или не подтвержден
+     QList<Watcher*> m_watchers;
+
+     //! \brief Таймер отправки сообщений
+     QTimer *m_sendTimer;
 };
 #endif // INCIDENT_H

@@ -6,11 +6,15 @@
 #include <QTime>
 
 Incident::Incident(IncidentType type)
-    : m_type(type)
-    , m_confirmed(false)
+    : m_confirmed(false)
+    , m_type(type)
     , m_message(Message())
+    , m_watchers(QList<Watcher*>())
+    , m_sendTimer(new QTimer())
 {
-
+    m_sendTimer->setSingleShot(false);
+    connect(m_sendTimer, &QTimer::timeout, this, &Incident::onSendTimer);
+    connect(this, &Incident::incidentOpenned, this, &Incident::onIncidentOpenned);
 }
 
 Incident::~Incident()
@@ -36,7 +40,7 @@ bool Incident::createMessage(const QString &name, const QString &ip)
     text.append(" : ");
     text.append(ip);
     text.append("; Status: ");
-    text.append(m_type); //to STRING!!
+    text.append(m_type); //to STRING!!!!!
     text.append(" : ");
     text.append(time);
 
@@ -71,29 +75,50 @@ void Incident::confirm()
     emit confirmedChanged();
 }
 
-void Incident::onIncidentOpenned() // Messenger *mesr, Contacts
+void Incident::setWatchers(const QList<Watcher *> list)
+{
+    m_watchers = list;
+}
+
+void Incident::onIncidentOpenned()
 {
     // запустить таймер отправки
+     m_sendTimer->start(5000);
+}
 
-    // по таймеру
-    // if(!confirmed)
-    //  m_messenger->sendMessage(m_message, contacts)
-    //
-    //
-    //Для каждого наблюдателя данного иныидента
-    // для каждого контакта наблюдателя вызываем метод отправки
-//    foreach(watcher in m_watchers) {
-//        foreach (m_watcher.contacts()) {
-//          switch (contact.type()) {
-//              case TelegramType:
-//                  m_tgMessage.send(watcher.telegramAddr())
-//                  break;
-//              case MailType:
-//                  m_mailMessage.send(watcher.mailAddr())
-//                  break;
-//              default:
-//                  break;
-//          }
-//        }
-//    }
+void Incident::onSendTimer()
+{
+    qDebug()<<"---onSendTimer";
+    //! Если инцидент подтвержден, то не отправлять сообщения
+     if(confirmed())
+        return;
+
+     //Для каждого наблюдателя данного инцидента
+     for(int i = 0; i < m_watchers.size(); i++) {
+         QHashIterator<Watcher::ContactType, QString> contactsIter(m_watchers.at(i)->getContacts());
+
+         // для каждого контакта наблюдателя вызываем метод отправки
+         while (contactsIter.hasNext()) {
+             contactsIter.next();
+             QString address = contactsIter.value();
+             m_message.send(address);
+         }
+     }
+
+     // если будет несколько классов сообщений, то нужно будет выбирать определенный объект
+     // сообщения по типу контакта
+ //    foreach(watcher in m_watchers) {
+ //        foreach (m_watcher.contacts()) {
+ //          switch (contact.type()) {
+ //              case TelegramType:
+ //                  m_tgMessage.send(watcher.telegramAddr())
+ //                  break;
+ //              case MailType:
+ //                  m_mailMessage.send(watcher.mailAddr())
+ //                  break;
+ //              default:
+ //                  break;
+ //          }
+ //        }
+     //    }
 }

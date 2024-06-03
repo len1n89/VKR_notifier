@@ -15,3 +15,8 @@ void Watcher::addContact(Watcher::ContactType type, const QString address)
 {
     m_contacs.insert(type, address);
 }
+
+QHash<Watcher::ContactType, QString> Watcher::getContacts() const
+{
+    return m_contacs;
+}

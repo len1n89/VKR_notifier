@@ -27,6 +27,10 @@ public:
     //! \brief Добавить новый контакт
     void addContact(ContactType type, const QString address);
 
+    //! Getters
+public:
+    QHash<ContactType, QString> getContacts() const;
+
 private:
     //! \brief Таблица контактов. Тип : Контакт
     QHash<ContactType, QString> m_contacs;

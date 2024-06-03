@@ -51,38 +51,20 @@ void Subject::openIncident(Incident::IncidentType type)
     qDebug()<<"***openIncident";
     Incident *inc = new Incident(type);
 
-    // new message
-    QString error;
-    if(m_status == Connected)
-        error = m_error;
-    else
-        error == "Disconnected!";
+    // Передать соответствующий список наблюдателей в инцидент
+    inc->setWatchers(m_watchers.value(type));
 
+    // new message
     inc->createMessage(m_name, m_ipAddress);
 
     //! создавать сообщение для каждого типа отправки
     //! inc->createMailMessage(m_name, m_ipAddress);
     //! inc->createTelegramMessage(m_name, m_ipAddress);
     //! inc->createPhone(m_name, m_ipAddress);
-    //!
-    //!
-    //! Для соответствующего типа инц-та передаем соответ-й список наблюдателей
-//    switch (type) {
-//    case ServerNotConnected:
-//        inc->setWatchers(m_watchers.value(ServerNotConnected));
-//        break;
-//    case DBNotConnectedToServer:
-//        inc->setWatchers(m_watchers.value(DBNotConnectedToServer));
-//        break;
-//    default:
-//        break;
-//    }
-
 
     m_incidentList.append(inc);
 
-    //emit incidentOpenned();
-    // пока не подтвержден - отправлять сообщения
+    emit inc->incidentOpenned();
 }
 
 void Subject::closeIncident(Incident::IncidentType type)

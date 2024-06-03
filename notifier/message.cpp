@@ -13,6 +13,11 @@ Message::~Message()
     qDebug()<<"~Message";
 }
 
+void Message::send(const QString &addr)
+{
+    qDebug()<<"Message::send : "<<addr<<" : "<<m_title<<" :: "<<m_body;
+}
+
 QString Message::getTitle() const
 {
     return m_title;
