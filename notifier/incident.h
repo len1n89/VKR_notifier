@@ -30,6 +30,9 @@ public:
     //! \brief Создать новое сообщение
     bool createMessage(const QString &name, const QString &ip);
 
+    //! \brief Инцидент разрешен
+    void resolve();
+
     //! Getters
 public:
     //! \brief Возвращает Идентификатор инцидента

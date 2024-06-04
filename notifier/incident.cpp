@@ -4,6 +4,9 @@
 #include <QDebug>
 #include <QDate>
 #include <QTime>
+#include<QMetaEnum>
+
+const static int SEND_TIMOUT = 5000;
 
 Incident::Incident(IncidentType type)
     : m_confirmed(false)
@@ -24,9 +27,9 @@ Incident::~Incident()
 
 bool Incident::createMessage(const QString &name, const QString &ip)
 {
-    QString text = "Alert! Subject ";
+    QString text = "Alert! ";
     text.append(name);
-    text.append(" : ");
+    text.append(": ");
     text.append(ip);
     m_message.setTitle(text);
     //m_tgMessage
@@ -35,18 +38,46 @@ bool Incident::createMessage(const QString &name, const QString &ip)
 
     QTime qtime;
     QString time = qtime.currentTime().toString();
-    text = "Alert! Subject ";
+
+    QMetaEnum metaEnum = QMetaEnum::fromType<Incident::IncidentType>();
+    text = metaEnum.valueToKey(Incident::m_type);
+    text.append(": ");
     text.append(name);
-    text.append(" : ");
+    text.append(": ");
     text.append(ip);
-    text.append("; Status: ");
-    text.append(m_type); //to STRING!!!!!
-    text.append(" : ");
+    text.append(": ");
     text.append(time);
 
     m_message.setBody(text);
     qDebug()<<"NEW MESSAGE: "<<m_message.getTitle();
     qDebug()<<"BODY: "<<m_message.getBody();
+}
+
+void Incident::resolve()
+{
+
+    // Формировка сообщения
+    QString title =  m_message.getTitle();
+    title.prepend("RESOLVED: ");
+    QString body =  m_message.getBody();
+    QTime qtime;
+    QString time = qtime.currentTime().toString();
+    body.prepend("Incident has been RESOLVED at " + time + " ");
+
+    m_message.setTitle(title);
+    m_message.setBody(body);
+
+    //Для каждого наблюдателя данного инцидента
+    for(int i = 0; i < m_watchers.size(); i++) {
+        QHashIterator<Watcher::ContactType, QString> contactsIter(m_watchers.at(i)->getContacts());
+
+        // для каждого контакта наблюдателя отправляем сообщение о разрешении
+        while (contactsIter.hasNext()) {
+            contactsIter.next();
+            QString address = contactsIter.value();
+            m_message.send(address);
+        }
+    }
 }
 
 int Incident::getId() const
@@ -82,13 +113,11 @@ void Incident::setWatchers(const QList<Watcher *> list)
 
 void Incident::onIncidentOpenned()
 {
-    // запустить таймер отправки
-     m_sendTimer->start(5000);
+     m_sendTimer->start(SEND_TIMOUT);
 }
 
 void Incident::onSendTimer()
 {
-    qDebug()<<"---onSendTimer";
     //! Если инцидент подтвержден, то не отправлять сообщения
      if(confirmed())
         return;
@@ -106,19 +135,16 @@ void Incident::onSendTimer()
      }
 
      // если будет несколько классов сообщений, то нужно будет выбирать определенный объект
-     // сообщения по типу контакта
- //    foreach(watcher in m_watchers) {
- //        foreach (m_watcher.contacts()) {
- //          switch (contact.type()) {
- //              case TelegramType:
- //                  m_tgMessage.send(watcher.telegramAddr())
- //                  break;
- //              case MailType:
- //                  m_mailMessage.send(watcher.mailAddr())
- //                  break;
- //              default:
- //                  break;
- //          }
- //        }
-     //    }
+     // сообщения по типу контакта из списка QList<Message> m_messages
+
+     //          switch (contact.type()) {
+     //              case TelegramType:
+     //                  m_tgMessage.send(watcher.telegramAddr())
+     //                  break;
+     //              case MailType:
+     //                  m_mailMessage.send(watcher.mailAddr())
+     //                  break;
+     //              default:
+     //                  break;
+     //          }
 }

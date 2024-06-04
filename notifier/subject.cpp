@@ -1,6 +1,5 @@
 #include "subject.h"
 #include "client.h"
-//#include "incident.h"
 
 #include <QDebug>
 
@@ -75,6 +74,7 @@ void Subject::closeIncident(Incident::IncidentType type)
         incident = m_incidentList.at(i);
         if(incident->type() == type) {
             m_incidentList.removeAt(i);
+            incident->resolve();
             incident->~Incident();
 
             emit incidentClosed();
