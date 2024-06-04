@@ -18,7 +18,7 @@ Item {
          }
          ListElement {
              name: "Server3"
-             ip: "localhost:6547"
+             ip: "localhost:6548"
              status: "DISCONNECTED"
          }
          ListElement {

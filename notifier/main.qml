@@ -30,6 +30,11 @@ Window {
                 anchors.fill: parent
                 Tab {
                     title: "Users"
+                    anchors.fill: parent
+                    UsersView {id: usersView}
+                }
+                Tab {
+                    title: "Watchers"
                 }
                 Tab {
                     title: "Servers"

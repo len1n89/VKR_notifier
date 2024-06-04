@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>Dashview.qml</file>
+        <file>UsersView.qml</file>
     </qresource>
 </RCC>
