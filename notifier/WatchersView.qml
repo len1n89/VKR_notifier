@@ -5,9 +5,9 @@ Item {
 
     Button {
         id: addButton
-        width: 60
+        width: 100
         height: 20
-        text: "Add User"
+        text: "Add Watcher"
         anchors.top: parent.top
         anchors.topMargin: 10
         anchors.left: parent.left
@@ -18,12 +18,12 @@ Item {
         anchors.top: addButton.bottom
         width: 300
         height: 500
-        model: usersModel
-        delegate: userDelegate
+        model: watcherModel
+        delegate: watcherDelegate
     }
 
     Component {
-        id: userDelegate
+        id: watcherDelegate
 
         Row {
             spacing: 5
@@ -53,19 +53,17 @@ Item {
     }
 
     ListModel {
-        id: usersModel
+        id: watcherModel
 
          ListElement {
-             name: "User1"
+             name: "Watcher1"
          }
          ListElement {
-             name: "User2"
+             name: "Watcher2"
          }
          ListElement {
-             name: "User3"
-         }
-         ListElement {
-             name: "User4"
+             name: "Watcher3"
          }
      }
+
 }

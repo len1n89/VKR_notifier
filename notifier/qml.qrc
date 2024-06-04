@@ -3,5 +3,7 @@
         <file>main.qml</file>
         <file>Dashview.qml</file>
         <file>UsersView.qml</file>
+        <file>WatchersView.qml</file>
+        <file>ServersView.qml</file>
     </qresource>
 </RCC>

@@ -35,9 +35,11 @@ Window {
                 }
                 Tab {
                     title: "Watchers"
+                    WatchersView {id: watchersView}
                 }
                 Tab {
                     title: "Servers"
+                    ServersView {id: serversView}
                 }
                 Tab {
                     title: "DB"
