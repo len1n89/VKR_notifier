@@ -1,5 +1,6 @@
 #include "message.h"
 #include <QDebug>
+#include <QTime>
 
 Message::Message()
     : m_title("")
@@ -10,12 +11,19 @@ Message::Message()
 
 Message::~Message()
 {
-    qDebug()<<"~Message";
+//    qDebug()<<"~Message";
 }
 
 void Message::send(const QString &addr)
 {
-    qDebug()<<"Message::send : "<<addr<<" : "<<m_title<<" :: "<<m_body;
+    QTime qtime;
+    QString time = qtime.currentTime().toString();
+
+    qDebug()<<time<<"Message::send************************************";
+    qDebug()<<addr;
+    qDebug()<<m_title;
+    qDebug()<<m_body;
+    qDebug()<<"*******************************************************";
 }
 
 QString Message::getTitle() const

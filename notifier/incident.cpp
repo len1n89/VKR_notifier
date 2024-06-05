@@ -22,7 +22,7 @@ Incident::Incident(IncidentType type)
 
 Incident::~Incident()
 {
-    qDebug()<<"~Incident";
+//    qDebug()<<"~Incident";
 }
 
 bool Incident::createMessage(const QString &name, const QString &ip)
@@ -49,8 +49,6 @@ bool Incident::createMessage(const QString &name, const QString &ip)
     text.append(time);
 
     m_message.setBody(text);
-    qDebug()<<"NEW MESSAGE: "<<m_message.getTitle();
-    qDebug()<<"BODY: "<<m_message.getBody();
 }
 
 void Incident::resolve()

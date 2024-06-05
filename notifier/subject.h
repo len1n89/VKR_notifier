@@ -90,6 +90,9 @@ public slots:
     //! \brief Если не удалось подключиться
     void onConnectionFailed();
 
+    //! \brief Обработка ошибок
+    void onErrorRecieveded(const QString &error);
+
 private:
     //! \brief Интервал попытоки подключения, после которого считать попытку неудачной
     int m_tryTimeout;

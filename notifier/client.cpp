@@ -3,6 +3,7 @@
 #include <QTcpSocket>
 #include <QDataStream>
 #include <QTimer>
+#include <QTime>
 #include <QHostInfo>
 
 #include <QDebug>
@@ -55,6 +56,11 @@ void Client::closeConnection()
         m_tcpSocket->abort();
 }
 
+qint64 Client::sendToServer(const QString &command)
+{
+    sendToServer(m_tcpSocket, command);
+}
+
 qint64 Client::sendToServer(QTcpSocket *socket, const QString &str)
 {
     QByteArray arrBlock;
@@ -92,7 +98,9 @@ void Client::readyRead()
             closeConnection();
         }
 
-//        emit hasReadSome(str);
+        if(str == "DBERROR")
+            emit errorRecieved(str);
+
         qDebug()<<"FROM SERVER: "<<str;
         m_nNextBlockSize = 0;
     }
@@ -107,11 +115,12 @@ void Client::connected()
 
 void Client::connectionTimeout()
 {
-//    qDebug() <<"connectionTimeout = "<<m_tcpSocket->state();
+    QTime qtime;
+    QString time = qtime.currentTime().toString();
 
     switch (m_tcpSocket->state()) {
     case QAbstractSocket::ConnectedState:
-        qDebug()<<"ConnectedState";
+        qDebug()<<time<<" ConnectedState";
         // Подключено
         m_timeoutTimer->stop();
         m_tryCount = TRY_COUNT;
@@ -138,7 +147,7 @@ void Client::connectionTimeout()
 
     case QAbstractSocket::UnconnectedState:
         // Если не удалось подключиться
-        qDebug()<<"UnconnectedState";
+        qDebug()<<time<<" UnconnectedState";
         m_timeoutTimer->stop();
         closeConnection();
 

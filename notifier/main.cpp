@@ -44,6 +44,11 @@ int main(int argc, char *argv[])
 
     server1->setWatchers(Incident::ServerNotConnected, list);
 
+    QList<Watcher*> list2;
+    list2.append(w2);
+
+    server1->setWatchers(Incident::DBNotConnectedToServer, list2);
+
     // затем при создании конкретного инцидента передать наблюдателей
 
     server1->tryToConnect();

@@ -2,6 +2,7 @@
 #include "client.h"
 
 #include <QDebug>
+#include <QTime>
 
 Subject::Subject()
     : m_tryTimeout(1000)
@@ -14,6 +15,7 @@ Subject::Subject()
 {
     connect(m_tcpClient, &Client::statusChanged, this, &Subject::onConnectionStatusChanged);
     connect(m_tcpClient, &Client::connetionFailed, this, &Subject::onConnectionFailed);
+    connect(m_tcpClient, &Client::errorRecieved, this, &Subject::onErrorRecieveded);
 }
 
 Subject::~Subject()
@@ -47,7 +49,10 @@ bool Subject::containsIncident(Incident::IncidentType type)
 
 void Subject::openIncident(Incident::IncidentType type)
 {
-    qDebug()<<"***openIncident";
+    QTime qtime;
+    QString time = qtime.currentTime().toString();
+    qDebug()<<time<<" openIncident";
+
     Incident *inc = new Incident(type);
 
     // Передать соответствующий список наблюдателей в инцидент
@@ -68,7 +73,10 @@ void Subject::openIncident(Incident::IncidentType type)
 
 void Subject::closeIncident(Incident::IncidentType type)
 {
-    qDebug()<<"***closeIncident";
+    QTime qtime;
+    QString time = qtime.currentTime().toString();
+    qDebug()<<time<<" closeIncident";
+
     Incident *incident;
     for(int i = 0; i < m_incidentList.size(); i++) {
         incident = m_incidentList.at(i);
@@ -136,20 +144,26 @@ void Subject::setWatchers(Incident::IncidentType type, QList<Watcher*> watchers)
 void Subject::onConnectionStatusChanged(bool status)
 {
     if(status){
-        qDebug()<<"Subject connected!";
+        QTime qtime;
+        QString time = qtime.currentTime().toString();
+        qDebug()<<time<<" Subject connected!";
+
         setStatus(Connected);
+
         // TODO запрос остояния сервера/ а потом проверка DBNotConnectedToServer
+        m_tcpClient->sendToServer("Check");
 
         // Если инцидент есть - то закрыть его
         if(this->containsIncident(Incident::ServerNotConnected)) {
-            qDebug()<<"onConnectionFailed containsIncident";
+//            qDebug()<<"onConnectionFailed containsIncident";
             closeIncident(Incident::ServerNotConnected);
-
-
         }
     }
     else {
-        qDebug()<<"Subject Disconnected!";
+        QTime qtime;
+        QString time = qtime.currentTime().toString();
+        qDebug()<<time<<" Subject Disconnected!";
+
         setStatus(Disconnected);
 
         // Если отрубило - попытка подключить
@@ -164,7 +178,7 @@ void Subject::onConnectionFailed()
 
     //! Открыть или не открыть инцидент
     if(!this->containsIncident(Incident::ServerNotConnected)) {
-        qDebug()<<"onConnectionFailed !containsIncident";
+//        qDebug()<<"onConnectionFailed !containsIncident";
         // если в списке нет инц-та с типом ServerNotConnected - создать новый и добавить в список
         openIncident(Incident::ServerNotConnected);
         tryToConnect();
@@ -172,4 +186,12 @@ void Subject::onConnectionFailed()
     else
         //! Если инцидент уже есть - то просто продолжать попытки подключения
         tryToConnect();
+}
+
+void Subject::onErrorRecieveded(const QString &error)
+{
+    qDebug()<<"onErrorRecieveded === "<<error;
+    if(!this->containsIncident(Incident::DBNotConnectedToServer)) {
+        openIncident(Incident::DBNotConnectedToServer);
+    }
 }

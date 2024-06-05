@@ -29,12 +29,14 @@ public:
 
 public slots:
     void closeConnection();
+    qint64 sendToServer(const QString &command);
     qint64 sendToServer(QTcpSocket *socket, const QString &str);
 
 signals:
     void statusChanged(bool status);
     void connectionError();
     void connetionFailed();
+    void errorRecieved(const QString &error);
 
 private slots:
     void readyRead();
